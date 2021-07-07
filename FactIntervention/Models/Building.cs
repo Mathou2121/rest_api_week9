@@ -9,5 +9,4 @@ public class Building
     [Key]
     public long Id { get; set; }
     public long customer_Id {get; set;}
-    public long address_Id {get;set;}
 }
