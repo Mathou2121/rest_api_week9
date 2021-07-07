@@ -21,11 +21,12 @@ namespace FactIntervention.Controllers
         }
 
         // GET: api/Elevators
-        // [HttpGet]
-        // public async Task<ActionResult<IEnumerable<Elevator>>> GetElevators()
-        // {
-        //     return await _context.elevators.ToListAsync();
-        // }
+        [HttpGet("offline")]
+        public async Task<ActionResult<IEnumerable<Elevator>>> GetElevators()
+        {
+           var offline = await _context.elevators.Where(e => e.Status.Equals("Intervention") || e.Status.Equals("Inactive")).ToListAsync();
+            return offline;
+        }
 
         // GET: api/Elevators/5
         [HttpGet("{id}")]

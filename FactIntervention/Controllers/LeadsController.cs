@@ -21,35 +21,39 @@ namespace FactIntervention.Controllers
         }
 
         // GET: api/Leads
-        // [HttpGet]
-        // public async Task<ActionResult<IEnumerable<Lead>>> GetLeads()
+        // [HttpGet("lastNoCheck")]
+        // public IEnumerable<Lead> GetLeads()
         // {
-        //     return await _context.leads.ToListAsync();
-        // }
-        // GET: api/Leads/5
-        // [HttpGet]
-        // public IEnumerable<Lead> GetLead(long id)
-        // {   
         //     var Mydate = System.DateTime.Now.AddDays(-30);
-        //     var customersList = _context.customers.ToList();
-        //     var leadEmail = _context.leads.ToList();
-        //     foreach (var customer in customersList) {
-        //     Console.WriteLine(customer.email_of_the_company_contact);
-        //     if (customer.email_of_the_company_contact == leadEmail.Find())
-        //     {
-                
-            
         //     IQueryable<Lead> Leads = 
-        //      from lead in _context.leads
+        //     from lead in _context.leads
         //     where lead.created_at  >= Mydate
         //     select lead;
-        //     return Leads.ToList(); }
-        //     }
-        //     else
-        //     {
-        //         return NoContent()
-        //     }
+        //     return Leads.ToList();
+ 
         // }
+        // GET: api/Leads/5
+        [HttpGet]
+        public IEnumerable<Lead> GetLead(long id)
+        {   
+            var Mydate = System.DateTime.Now.AddDays(-30);
+            IQueryable<Lead> Leads =
+            from lead in _context.leads
+            where lead.created_at  >= Mydate
+            select lead;
+            var customersList = _context.customers.ToList();
+            var Results = Leads.ToList();
+
+            foreach (var Slead in Leads) {
+               var email = Slead.email;
+                foreach (var customer in customersList) {
+                    if (customer.email_of_the_company_contact == email || customer.technical_manager_email_for_service == email) {
+                        Results.RemoveAll(r => r.email == customer.email_of_the_company_contact || r.email == customer.technical_manager_email_for_service);
+                    }
+                }
+            }
+            return Results; 
+        }
 
         // PUT: api/Leads/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
