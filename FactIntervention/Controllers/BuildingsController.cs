@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MoreLinq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,8 @@ namespace FactIntervention.Controllers
                 join ele in _context.elevators on col.Id equals ele.column_Id
                 where bat.Status == "Intervention" || col.Status == "Intervention" || ele.Status == "Intervention"
                 select build;
-            return Building.ToList();
+            var result = Building.DistinctBy(i => i.Id);
+            return result;
         }
 
         // // GET: api/Buildings/5

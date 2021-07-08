@@ -39,39 +39,67 @@ namespace FactIntervention.Controllers
                 return NotFound();
             }
 
-            return elevator;
+            return Content("The status of this Elevator is currently:" + elevator.Status);
         }
 
         // PUT: api/Elevators/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutElevator(long id, Elevator elevator)
+        [HttpPut("{id}/inactive")]
+        public async Task<ActionResult<Elevator>> PutElevatortoInactive([FromRoute] long id)
         {
-            if (id != elevator.Id)
+            var elevator = await this._context.elevators.FindAsync(id);
+            if (elevator == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(elevator).State = EntityState.Modified;
-
-            try
+            else
             {
-                await _context.SaveChangesAsync();
+                elevator.Status = "Inactive";
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ElevatorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            this._context.elevators.Update(elevator);
+            await this._context.SaveChangesAsync();
 
-            return NoContent();
+            return Content("The status of the elevator ID: " + elevator.Id +
+            " has been changed to: " + elevator.Status);
+        }
+
+        [HttpPut("{id}/active")]
+        public async Task<ActionResult<Elevator>> PutElevatortoActive([FromRoute] long id)
+        {
+            var elevator = await this._context.elevators.FindAsync(id);
+            if (elevator == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                elevator.Status = "Active";
+            }
+            this._context.elevators.Update(elevator);
+            await this._context.SaveChangesAsync();
+
+            return Content("The status of the elevator ID: " + elevator.Id +
+            " has been changed to: " + elevator.Status);
+        }
+
+        [HttpPut("{id}/intervention")]
+        public async Task<ActionResult<Elevator>> PutElevatortoIntervention([FromRoute] long id)
+        {
+            var elevator = await this._context.elevators.FindAsync(id);
+            if (elevator == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                elevator.Status = "Intervention";
+            }
+            this._context.elevators.Update(elevator);
+            await this._context.SaveChangesAsync();
+
+            return Content("The status of the elevator ID: " + elevator.Id +
+            " has been changed to: " + elevator.Status);
         }
 
         // POST: api/Elevators

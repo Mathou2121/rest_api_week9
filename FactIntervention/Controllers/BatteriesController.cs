@@ -38,41 +38,68 @@ namespace FactIntervention.Controllers
                 return NotFound();
             }
 
-            return battery;
+            return Content("The status of this Battery is currently:" + battery.Status);
         }
 
         // PUT: api/Batteries/5    //Put Request must be the full body, not just the update
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBattery(long id, Battery battery)
+        [HttpPut("{id}/inactive")]
+        public async Task<ActionResult<Battery>> PutBatterytoInactive([FromRoute] long id)
         {
-            if (id != battery.Id)
+            var battery = await this._context.batteries.FindAsync(id);
+            if (battery == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(battery).State = EntityState.Modified;
-
-            try
+            else
             {
-                await _context.SaveChangesAsync();
+                battery.Status = "Inactive";
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BatteryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            this._context.batteries.Update(battery);
+            await this._context.SaveChangesAsync();
 
-            return NoContent();
+            return Content("The status of the Battery ID: " + battery.Id +
+            " has been changed to: " + battery.Status);
         }
 
+        [HttpPut("{id}/active")]
+        public async Task<ActionResult<Battery>> PutBatterytoActive([FromRoute] long id)
+        {
+            var battery = await this._context.batteries.FindAsync(id);
+            if (battery == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                battery.Status = "Active";
+            }
+            this._context.batteries.Update(battery);
+            await this._context.SaveChangesAsync();
+
+            return Content("The status of the Battery ID: " + battery.Id +
+            " has been changed to: " + battery.Status);
+        }
+
+        [HttpPut("{id}/intervention")]
+        public async Task<ActionResult<Battery>> PutBatterytoIntervention([FromRoute] long id)
+        {
+            var battery = await this._context.batteries.FindAsync(id);
+            if (battery == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                battery.Status = "Intervention";
+            }
+            this._context.batteries.Update(battery);
+            await this._context.SaveChangesAsync();
+
+            return Content("The status of the Battery ID: " + battery.Id +
+            " has been changed to: " + battery.Status);
+        }
         // POST: api/Batteries
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
