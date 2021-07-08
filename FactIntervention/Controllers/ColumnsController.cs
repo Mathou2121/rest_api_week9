@@ -38,41 +38,68 @@ namespace FactIntervention.Controllers
                 return NotFound();
             }
 
-            return column;
+            return Content("The status of this Column is currently:" + column.Status);
         }
 
         // PUT: api/Columns/5    //Put Request must be the full body, not just the update
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutColumn(long id, Column column)
+       [HttpPut("{id}/inactive")]
+        public async Task<ActionResult<Column>> PutColumntoInactive([FromRoute] long id)
         {
-            if (id != column.Id)
+            var column = await this._context.columns.FindAsync(id);
+            if (column == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(column).State = EntityState.Modified;
-
-            try
+            else
             {
-                await _context.SaveChangesAsync();
+                column.Status = "Inactive";
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ColumnExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            this._context.columns.Update(column);
+            await this._context.SaveChangesAsync();
 
-            return NoContent();
+            return Content("The status of the Column ID: " + column.Id +
+            " has been changed to: " + column.Status);
         }
 
+        [HttpPut("{id}/active")]
+        public async Task<ActionResult<Column>> PutColumntoActive([FromRoute] long id)
+        {
+            var column = await this._context.columns.FindAsync(id);
+            if (column == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                column.Status = "Active";
+            }
+            this._context.columns.Update(column);
+            await this._context.SaveChangesAsync();
+
+            return Content("The status of the Column ID: " + column.Id +
+            " has been changed to: " + column.Status);
+        }
+
+        [HttpPut("{id}/intervention")]
+        public async Task<ActionResult<Column>> PutColumntoIntervention([FromRoute] long id)
+        {
+            var column = await this._context.columns.FindAsync(id);
+            if (column == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                column.Status = "Intervention";
+            }
+            this._context.columns.Update(column);
+            await this._context.SaveChangesAsync();
+
+            return Content("The status of the Column ID: " + column.Id +
+            " has been changed to: " + column.Status);
+        }
         // POST: api/Columns
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
